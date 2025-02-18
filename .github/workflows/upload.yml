@@ -27,8 +27,12 @@ jobs:
       - name: images 폴더가 없으면 생성
         run: mkdir -p images
 
-      - name: 이미지 업로드 처리
+      - name: 이미지 업로드 처리 (파일이 있을 때만 실행)
         run: |
-          git add images/*
-          git commit -m "새 이미지 자동 업로드" || echo "No changes to commit"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/KIMSEUNGMOON/image-hosting.git main
+          if [ -n "$(ls -A images/)" ]; then
+            git add images/*
+            git commit -m "새 이미지 자동 업로드"
+            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/KIMSEUNGMOON/image-hosting.git main
+          else
+            echo "No new images to upload"
+          fi
