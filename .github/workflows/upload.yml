@@ -6,6 +6,9 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: write  # ✅ GITHUB_TOKEN이 push 권한을 가지도록 설정
+
 jobs:
   upload:
     runs-on: ubuntu-latest
