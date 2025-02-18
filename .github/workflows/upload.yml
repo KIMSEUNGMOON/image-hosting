@@ -6,33 +6,27 @@ on:
       - main
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
   upload:
     runs-on: ubuntu-latest
-
     steps:
       - name: 저장소 체크아웃
         uses: actions/checkout@v3
-        with:
-          persist-credentials: false
 
-      - name: GitHub 인증 설정
+      - name: Git 설정
         run: |
-          git config --global user.email "github-actions@github.com"
-          git config --global user.name "GitHub Actions"
+          git config --global user.email "naamnyam@e-inteco.co.kr"
+          git config --global user.name "KIMSEUNGMOON"
 
-      - name: images 폴더가 없으면 생성
-        run: mkdir -p images
-
-      - name: 이미지 업로드 처리 (파일이 있을 때만 실행)
+      - name: 이미지 업로드 처리 (변경된 파일이 있을 때만 실행)
         run: |
-          if [ -n "$(ls -A images/)" ]; then
+          CHANGED_FILES=$(git status --porcelain images/ | wc -l)
+          if [ "$CHANGED_FILES" -gt "0" ]; then
+            echo "변경된 파일이 존재합니다. GitHub에 업로드합니다."
             git add images/*
-            git commit -m "새 이미지 자동 업로드"
-            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/KIMSEUNGMOON/image-hosting.git main
+            git commit -m "GitHub Actions 자동 업로드"
+            git push origin main
           else
-            echo "No new images to upload"
+            echo "변경된 파일이 없습니다. 스크립트를 종료합니다."
+            exit 0
           fi
