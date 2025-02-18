@@ -1,9 +1,9 @@
 name: 자동 이미지 업로드
 
 on:
-  schedule:
-    - cron: '*/5 * * * *'  # 매 5분마다 실행
   push:
+    paths:
+      - "images/**"  # 내 로컬에서 Push한 파일이 Github에 올라오면 즉시 실행
     branches:
       - main
 
