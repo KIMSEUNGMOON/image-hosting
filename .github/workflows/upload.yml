@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
+  schedule:
+    - cron: '*/5 * * * *'  # 매 5분마다 실행
 
 jobs:
   upload:
@@ -13,20 +14,14 @@ jobs:
       - name: 저장소 체크아웃
         uses: actions/checkout@v3
 
-      - name: Git 설정
+      - name: 새로운 이미지 확인 및 자동 커밋
         run: |
           git config --global user.email "naamnyam@e-inteco.co.kr"
           git config --global user.name "KIMSEUNGMOON"
-
-      - name: 이미지 업로드 처리 (변경된 파일이 있을 때만 실행)
-        run: |
-          CHANGED_FILES=$(git status --porcelain images/ | wc -l)
-          if [ "$CHANGED_FILES" -gt "0" ]; then
-            echo "변경된 파일이 존재합니다. GitHub에 업로드합니다."
-            git add images/*
-            git commit -m "GitHub Actions 자동 업로드"
-            git push origin main
+          git add images/*
+          if git diff --cached --quiet; then
+            echo "변경 사항 없음"
           else
-            echo "변경된 파일이 없습니다. 스크립트를 종료합니다."
-            exit 0
+            git commit -m "자동 업로드 - 새로운 이미지 추가"
+            git push origin main
           fi
