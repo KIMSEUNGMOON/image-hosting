@@ -8,15 +8,15 @@ on:
 jobs:
   update-latest:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
       - name: Find Latest Image and Rename
         run: |
-          latest_file=$(ls -t images/*.png | head -n 1)
-          echo "Latest file: $latest_file"
-          cp "$latest_file" images/latest.png
+          latest_file=$(ls -t images/*.png | head -n 1)  # 최신 파일 찾기
+          cp "$latest_file" images/latest.png  # 최신 파일을 latest.png로 복사
 
       - name: Commit and Push Changes
         run: |
@@ -24,4 +24,4 @@ jobs:
           git config --global user.name "GitHub Actions"
           git add images/latest.png
           git commit -m "Update latest image" || echo "No changes to commit"
-          git push origin main
+          git push
