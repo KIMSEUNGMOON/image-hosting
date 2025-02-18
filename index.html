@@ -1,12 +1,26 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Hosting</title>
-</head>
-<body>
-    <h1>환영합니다! 이미지 호스팅 웹사이트입니다.</h1>
-    <img src="images/900_220_2025-02-17_21-05_30.png" alt="업로드된 이미지">
-</body>
-</html>
+name: Update Latest Image
+
+on:
+  push:
+    paths:
+      - "images/*"
+
+jobs:
+  update-latest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Find Latest Image and Rename
+        run: |
+          latest_file=$(ls -t images/*.png | head -n 1)
+          cp "$latest_file" images/latest.png
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.email "your-email@example.com"
+          git config --global user.name "GitHub Actions"
+          git add images/latest.png
+          git commit -m "Update latest image"
+          git push
